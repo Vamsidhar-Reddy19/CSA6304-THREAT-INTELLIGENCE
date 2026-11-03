@@ -1,0 +1,61 @@
+
+# Network Segmentation Simulation
+
+# Define network segments and their trust levels
+network_segments = {
+    "Guest_Network": "Low Trust",
+    "Employee_Network": "Medium Trust",
+    "Sensitive_Network": "High Trust"
+}
+
+# Define access control policies
+# Key = source segment, Value = permitted destination segments
+access_policy = {
+    "Guest_Network": ["Guest_Network"],
+    "Employee_Network": ["Employee_Network", "Guest_Network"],
+    "Sensitive_Network": [
+        "Sensitive_Network",
+        "Employee_Network",
+        "Guest_Network"
+    ]
+}
+
+
+def check_access(source, destination):
+    print("\nSource Segment:", source)
+    print("Destination Segment:", destination)
+
+    if destination in access_policy.get(source, []):
+        print("Access Status: ALLOWED")
+        print("Communication is permitted by the network policy.")
+        return True
+    else:
+        print("Access Status: BLOCKED")
+        print("Network segmentation prevents this communication.")
+        return False
+
+
+# Display network configuration
+print("=== Network Segmentation Model ===")
+
+for segment, trust in network_segments.items():
+    print(segment, "->", trust)
+
+
+# Simulate a compromised guest network
+print("\n=== Simulating a Compromised Guest Network ===")
+
+source_segment = "Guest_Network"
+destination_segment = "Sensitive_Network"
+
+print("An attacker has compromised the Guest Network.")
+print("The attacker attempts to access the Sensitive Network.")
+
+if not check_access(source_segment, destination_segment):
+    print("\nRESULT: Lateral movement successfully blocked.")
+
+
+# Demonstrate a permitted communication
+print("\n=== Testing an Allowed Connection ===")
+
+check_access("Employee_Network", "Guest_Network")

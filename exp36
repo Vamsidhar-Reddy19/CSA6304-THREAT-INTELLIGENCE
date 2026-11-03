@@ -1,0 +1,46 @@
+
+def identify_standard(description):
+    description = description.lower()
+
+    standards = {
+        "PCI-DSS": [
+            "credit card", "cardholder data",
+            "payment card", "card payment"
+        ],
+        "HIPAA": [
+            "patient records", "protected health information",
+            "medical records", "healthcare data"
+        ],
+        "GDPR": [
+            "personal data", "eu residents",
+            "data subject", "privacy rights"
+        ],
+        "SOX": [
+            "financial reporting", "financial statements",
+            "accounting controls", "corporate audit"
+        ]
+    }
+
+    scores = {
+        standard: sum(
+            1 for keyword in keywords
+            if keyword in description
+        )
+        for standard, keywords in standards.items()
+    }
+
+    highest = max(scores.values())
+    matches = [
+        standard for standard, score in scores.items()
+        if score == highest and score > 0
+    ]
+
+    if len(matches) == 1:
+        return matches[0]
+    elif len(matches) > 1:
+        return "Multiple Standards - Manual Review Required"
+    return "No Clear Match - Manual Review Required"
+
+
+description = input("Describe the system or data: ")
+print("Likely Compliance Standard:", identify_standard(description))

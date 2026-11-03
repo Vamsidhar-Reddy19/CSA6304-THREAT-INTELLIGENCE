@@ -1,0 +1,75 @@
+
+def check_security_policy(policy_text):
+    # Required governance elements and their keywords
+    requirements = {
+        "Scope": ["scope", "applies to", "coverage"],
+        "Roles and Responsibilities": [
+            "roles", "responsibilities", "assigned duties"
+        ],
+        "Enforcement": [
+            "enforcement", "disciplinary action", "non-compliance"
+        ],
+        "Review Cycle": [
+            "review cycle", "reviewed annually",
+            "annual review", "review every"
+        ],
+        "Approval Authority": [
+            "approved by", "approval authority",
+            "authorized by", "policy owner"
+        ]
+    }
+
+    policy_text = policy_text.lower()
+    missing = []
+    present = []
+
+    for element, keywords in requirements.items():
+        found = any(keyword in policy_text for keyword in keywords)
+
+        if found:
+            present.append(element)
+        else:
+            missing.append(element)
+
+    # Display results
+    print("\n--- Security Policy Assessment Report ---")
+
+    print("\nGovernance Elements Present:")
+    if present:
+        for element in present:
+            print("[PRESENT]", element)
+    else:
+        print("None")
+
+    print("\nMissing Governance Elements:")
+    if missing:
+        for element in missing:
+            print("[MISSING]", element)
+    else:
+        print("None")
+
+    print("\nTotal Elements:", len(requirements))
+    print("Present:", len(present))
+    print("Missing:", len(missing))
+
+    if not missing:
+        print("\nResult: All required elements were identified.")
+    else:
+        print("\nResult: Policy needs improvement.")
+
+
+# Input draft security policy
+print("Enter the draft security policy.")
+print("Type END on a new line to finish:\n")
+
+lines = []
+
+while True:
+    line = input()
+    if line.strip().upper() == "END":
+        break
+    lines.append(line)
+
+policy_text = "\n".join(lines)
+
+check_security_policy(policy_text)

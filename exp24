@@ -1,0 +1,51 @@
+
+# Illustrative baseline values for an educational exercise
+
+baseline = {
+    "password_min_length": 12,
+    "mfa_enabled": True,
+    "automatic_updates": True,
+    "backup_enabled": True,
+    "firewall_enabled": True
+}
+
+current = {
+    "password_min_length": 8,
+    "mfa_enabled": True,
+    "automatic_updates": False,
+    "backup_enabled": True,
+    "firewall_enabled": False
+}
+
+
+def check_baseline(baseline, current):
+    failed = []
+    passed = []
+
+    for control, required in baseline.items():
+        actual = current.get(control)
+
+        if actual is None:
+            failed.append((control, "Not configured"))
+        elif isinstance(required, int) and not isinstance(required, bool):
+            if actual >= required:
+                passed.append(control)
+            else:
+                failed.append((control, f"Current: {actual}, Required: {required}"))
+        elif actual == required:
+            passed.append(control)
+        else:
+            failed.append((control, f"Current: {actual}, Required: {required}"))
+
+    print("=== Security Baseline Assessment ===")
+
+    print("\nCompliant Controls:")
+    for control in passed:
+        print("-", control)
+
+    print("\nControls Failing Baseline:")
+    for control, reason in failed:
+        print("-", control, "->", reason)
+
+
+check_baseline(baseline, current)

@@ -1,0 +1,67 @@
+
+# Experiment 18: Malware Detection Using SHA-256 Hash Comparison
+# Google Colab: Upload and scan a file in one program
+
+import hashlib
+import os
+from google.colab import files
+
+# Sample database containing placeholder hashes for demonstration.
+# Replace these with verified malicious hashes for real hash matching.
+MALICIOUS_HASHES = {
+    "a" * 64: "Example-Malware-A",
+    "b" * 64: "Example-Malware-B"
+}
+
+# Step 1: Calculate the SHA-256 hash of a file
+def calculate_sha256(file_path):
+    sha256 = hashlib.sha256()
+
+    try:
+        with open(file_path, "rb") as file:
+            for chunk in iter(lambda: file.read(4096), b""):
+                sha256.update(chunk)
+
+        return sha256.hexdigest()
+
+    except OSError as error:
+        print("Error reading file:", error)
+        return None
+
+
+# Step 2: Compare the hash against the database
+def detect_malware(file_path):
+    print("\n--- File Scan Report ---")
+    print("File name:", os.path.basename(file_path))
+
+    file_hash = calculate_sha256(file_path)
+
+    if file_hash is None:
+        return
+
+    print("SHA-256 Hash:", file_hash)
+
+    if file_hash in MALICIOUS_HASHES:
+        print("Status: KNOWN-MALICIOUS HASH MATCH")
+        print("Threat name:", MALICIOUS_HASHES[file_hash])
+        print("Action: Isolate the file and investigate.")
+    else:
+        print("Status: No match in the sample database.")
+        print("Note: No match does not guarantee that the file is safe.")
+
+
+# Step 3: Upload a file from your computer
+print("=== SHA-256 Malware Detection System ===")
+print("Select a file to scan.")
+
+uploaded = files.upload()
+
+# Step 4: Scan every uploaded file
+if uploaded:
+    for filename in uploaded.keys():
+        file_path = os.path.join("/content", filename)
+        detect_malware(file_path)
+
+    print("\n=== Scan Completed ===")
+else:
+    print("No file was uploaded.")

@@ -1,0 +1,43 @@
+
+def classify_threat(description):
+    description = description.lower()
+
+    categories = {
+        "Phishing": [
+            "phishing", "fake email", "malicious link",
+            "stolen credentials"
+        ],
+        "DoS/DDoS": [
+            "denial of service", "ddos",
+            "traffic flood", "service unavailable"
+        ],
+        "Malware": [
+            "ransomware", "malware", "trojan",
+            "virus infection"
+        ],
+        "Man-in-the-Middle": [
+            "man-in-the-middle", "mitm",
+            "intercepted communication", "arp spoofing"
+        ]
+    }
+
+    scores = {
+        category: sum(1 for word in keywords if word in description)
+        for category, keywords in categories.items()
+    }
+
+    highest = max(scores.values())
+    matches = [
+        category for category, score in scores.items()
+        if score == highest and score > 0
+    ]
+
+    if len(matches) == 1:
+        return matches[0]
+    elif len(matches) > 1:
+        return "Ambiguous - Manual Review Required"
+    return "Unknown Threat - Manual Review Required"
+
+
+description = input("Enter incident description: ")
+print("Threat Category:", classify_threat(description))

@@ -1,0 +1,83 @@
+
+# Experiment 15: Security Incident Root-Cause Classification
+
+def classify_incident(narrative):
+    narrative = narrative.lower()
+
+    root_cause_keywords = {
+        "Phishing": [
+            "phishing email", "fake email", "malicious link",
+            "stolen password", "credential theft", "email attachment"
+        ],
+        "Unpatched Vulnerability": [
+            "unpatched", "security patch", "known vulnerability",
+            "outdated software", "vulnerable version", "exploit"
+        ],
+        "Misconfiguration": [
+            "misconfigured", "incorrect configuration",
+            "default password", "publicly exposed",
+            "open storage bucket", "excessive permissions"
+        ],
+        "Insider Threat": [
+            "employee stole", "insider", "malicious employee",
+            "unauthorized data access", "employee leaked",
+            "disgruntled employee"
+        ],
+        "Supply-Chain Compromise": [
+            "third-party software", "compromised vendor",
+            "malicious software update", "supplier compromise",
+            "software dependency", "vendor breach"
+        ]
+    }
+
+    scores = {}
+
+    # Count keyword matches for each category
+    for category, keywords in root_cause_keywords.items():
+        scores[category] = sum(
+            1 for keyword in keywords if keyword in narrative
+        )
+
+    highest_score = max(scores.values())
+
+    print("\n--- Category Match Scores ---")
+    for category, score in scores.items():
+        print(f"{category}: {score}")
+
+    if highest_score == 0:
+        return "Insufficient Evidence - Manual Investigation Required"
+
+    # Check whether multiple categories share the highest score
+    top_categories = [
+        category for category, score in scores.items()
+        if score == highest_score
+    ]
+
+    if len(top_categories) > 1:
+        return "Ambiguous - Further Investigation Required (" + ", ".join(top_categories) + ")"
+
+    return top_categories[0]
+
+
+print("=== Security Incident Root-Cause Classifier ===")
+
+incident = input("\nEnter the security incident narrative: ")
+
+result = classify_incident(incident)
+
+print("\n--- Classification Result ---")
+print("Incident Narrative:", incident)
+print("Likely Root Cause:", result)
+
+if result == "Phishing":
+    print("Recommendation: Review email logs, reset exposed credentials, and investigate affected accounts.")
+elif result == "Unpatched Vulnerability":
+    print("Recommendation: Verify the vulnerability and apply the appropriate security patch.")
+elif result == "Misconfiguration":
+    print("Recommendation: Correct the configuration and review access permissions.")
+elif result == "Insider Threat":
+    print("Recommendation: Preserve audit logs and investigate access through approved procedures.")
+elif result == "Supply-Chain Compromise":
+    print("Recommendation: Investigate affected dependencies, validate software integrity, and isolate affected systems if necessary.")
+else:
+    print("Recommendation: Collect more evidence and perform a manual root-cause investigation.")

@@ -1,0 +1,56 @@
+
+# SOC Alert Priority Classification
+
+def classify_alert(alert):
+    alert = alert.lower()
+
+    # Priority keywords
+    priority_keywords = {
+        "P1 - Critical": [
+            "ransomware", "data breach", "active attack",
+            "privilege escalation", "critical server compromised"
+        ],
+        "P2 - High": [
+            "malware detected", "multiple failed logins",
+            "suspicious admin activity", "unauthorized access"
+        ],
+        "P3 - Medium": [
+            "port scan", "suspicious login",
+            "outdated software", "policy violation"
+        ],
+        "P4 - Low": [
+            "failed login", "unknown device",
+            "minor configuration issue", "informational"
+        ]
+    }
+
+    # Check priorities from highest to lowest
+    for priority, keywords in priority_keywords.items():
+        for keyword in keywords:
+            if keyword in alert:
+                return priority
+
+    return "P3 - Medium (Manual Review Required)"
+
+
+# Main program
+print("=== SOC Alert Triage System ===")
+
+alert_description = input("Enter SOC alert description: ")
+
+priority = classify_alert(alert_description)
+
+print("\n--- Alert Triage Result ---")
+print("Alert:", alert_description)
+print("Assigned Priority:", priority)
+
+if priority.startswith("P1"):
+    print("Action: Immediate investigation and escalation.")
+elif priority.startswith("P2"):
+    print("Action: Investigate promptly.")
+elif priority.startswith("P3"):
+    print("Action: Investigate according to the response queue.")
+elif priority.startswith("P4"):
+    print("Action: Log, monitor, or review as appropriate.")
+else:
+    print("Action: Analyst review required.")

@@ -1,0 +1,110 @@
+
+from datetime import datetime
+from collections import defaultdict
+
+# STEP 1: Collect raw events from multiple sources
+raw_events = [
+    {
+        "source": "Authentication",
+        "message": "Failed login for user admin from 192.0.2.10"
+    },
+    {
+        "source": "Firewall",
+        "message": "Connection blocked from 192.0.2.10"
+    },
+    {
+        "source": "Authentication",
+        "message": "Failed login for user admin from 192.0.2.10"
+    },
+    {
+        "source": "Endpoint",
+        "message": "Malware scan completed on PC-01"
+    },
+    {
+        "source": "Authentication",
+        "message": "Failed login for user admin from 192.0.2.10"
+    }
+]
+
+print("=== SIEM PIPELINE SIMULATION ===")
+
+# STEP 2: Normalize events into a common format
+normalized_events = []
+
+for event in raw_events:
+    message = event["message"]
+    event_type = "OTHER"
+    source_ip = "Unknown"
+    username = "Unknown"
+
+    if "Failed login" in message:
+        event_type = "FAILED_LOGIN"
+        parts = message.split()
+        username = parts[4]
+        source_ip = parts[6]
+
+    elif "Connection blocked" in message:
+        event_type = "BLOCKED_CONNECTION"
+        source_ip = message.split()[-1]
+
+    elif "Malware scan" in message:
+        event_type = "MALWARE_SCAN"
+
+    normalized_event = {
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "source": event["source"],
+        "event_type": event_type,
+        "source_ip": source_ip,
+        "username": username,
+        "raw_message": message
+    }
+
+    normalized_events.append(normalized_event)
+
+print("\n--- STEP 1: RAW EVENTS COLLECTED ---")
+for event in raw_events:
+    print(event)
+
+print("\n--- STEP 2: NORMALIZED EVENTS ---")
+for event in normalized_events:
+    print(event)
+
+# STEP 3: Correlate related events
+failed_logins = defaultdict(int)
+blocked_connections = defaultdict(int)
+
+for event in normalized_events:
+    if event["event_type"] == "FAILED_LOGIN":
+        failed_logins[event["source_ip"]] += 1
+
+    elif event["event_type"] == "BLOCKED_CONNECTION":
+        blocked_connections[event["source_ip"]] += 1
+
+print("\n--- STEP 3: EVENT CORRELATION ---")
+
+for ip, count in failed_logins.items():
+    print(f"{ip}: {count} failed login attempts")
+
+# STEP 4: Generate security alerts
+print("\n--- STEP 4: SECURITY ALERTS ---")
+
+alert_generated = False
+
+for ip, count in failed_logins.items():
+    if count >= 3:
+        alert_generated = True
+        print("ALERT: Possible brute-force attack detected!")
+        print("Source IP:", ip)
+        print("Failed login attempts:", count)
+        print("Severity: HIGH")
+        print("Recommended action: Investigate the source IP and review authentication logs.")
+
+for ip, count in blocked_connections.items():
+    if ip in failed_logins:
+        print(f"Correlation note: Firewall blocked {ip} "
+              f"and {failed_logins[ip]} failed logins were recorded.")
+
+if not alert_generated:
+    print("No high-priority alert detected.")
+
+print("\n=== SIEM PIPELINE COMPLETED ===")

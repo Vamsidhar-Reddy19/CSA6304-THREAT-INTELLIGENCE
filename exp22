@@ -1,0 +1,36 @@
+
+# Simulated authentication log
+logs = [
+    {"time": "10:00:00", "user": "alice", "status": "FAIL"},
+    {"time": "10:00:10", "user": "alice", "status": "FAIL"},
+    {"time": "10:00:20", "user": "alice", "status": "FAIL"},
+    {"time": "10:00:30", "user": "alice", "status": "SUCCESS"},
+    {"time": "10:01:00", "user": "bob", "status": "SUCCESS"}
+]
+
+username = input("Enter username to investigate: ").strip()
+threshold = 3
+
+failed_count = 0
+detected = False
+
+print("\n--- Authentication Log Analysis ---")
+
+for entry in logs:
+    if entry["user"] != username:
+        continue
+
+    print(entry)
+
+    if entry["status"] == "FAIL":
+        failed_count += 1
+
+    elif entry["status"] == "SUCCESS":
+        if failed_count >= threshold:
+            detected = True
+            print("\nALERT: Possible brute-force pattern detected.")
+            print("Failed attempts before success:", failed_count)
+        failed_count = 0
+
+if not detected:
+    print("\nNo matching brute-force pattern detected.")

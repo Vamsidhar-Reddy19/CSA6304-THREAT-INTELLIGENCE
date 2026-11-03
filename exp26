@@ -1,0 +1,62 @@
+
+import hashlib
+import os
+
+# Harmless demonstration file
+sample_path = "sample_malware_test.txt"
+
+with open(sample_path, "w", encoding="utf-8") as file:
+    file.write("Test file containing CreateRemoteThread and VirtualAlloc")
+
+# Static analysis
+def static_analysis(path):
+    with open(path, "rb") as file:
+        data = file.read()
+
+    file_hash = hashlib.sha256(data).hexdigest()
+
+    suspicious_strings = [
+        b"CreateRemoteThread",
+        b"VirtualAlloc",
+        b"WriteProcessMemory",
+        b"WinExec"
+    ]
+
+    found = [
+        item.decode() for item in suspicious_strings
+        if item.lower() in data.lower()
+    ]
+
+    print("=== STATIC ANALYSIS ===")
+    print("File:", path)
+    print("SHA-256:", file_hash)
+    print("Suspicious strings:", found if found else "None found")
+
+# Simulated dynamic behavior logs
+def dynamic_analysis():
+    behavior_logs = [
+        "Process started",
+        "Attempted to modify startup registry",
+        "Unexpected outbound connection",
+        "File encryption behavior detected"
+    ]
+
+    suspicious_terms = [
+        "modify startup registry",
+        "unexpected outbound connection",
+        "file encryption"
+    ]
+
+    print("\n=== SIMULATED DYNAMIC ANALYSIS ===")
+
+    for event in behavior_logs:
+        print("Behavior:", event)
+
+        if any(term in event.lower() for term in suspicious_terms):
+            print("ALERT: Suspicious behavior detected")
+
+static_analysis(sample_path)
+dynamic_analysis()
+
+# Remove the harmless test file
+os.remove(sample_path)

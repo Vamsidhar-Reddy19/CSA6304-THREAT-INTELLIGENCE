@@ -1,0 +1,30 @@
+
+from collections import Counter
+
+# Simulated security events
+events = [
+    {"user": "alice", "severity": "HIGH", "event": "Failed login"},
+    {"user": "bob", "severity": "LOW", "event": "Successful login"},
+    {"user": "alice", "severity": "HIGH", "event": "Unauthorized access"},
+    {"user": "charlie", "severity": "MEDIUM", "event": "Port scan"},
+    {"user": "bob", "severity": "LOW", "event": "Successful logout"}
+]
+
+# Operation 1: Search filter
+print("=== Search Results: HIGH Severity ===")
+
+filtered = [
+    event for event in events
+    if event["severity"] == "HIGH"
+]
+
+for event in filtered:
+    print(event)
+
+# Operation 2: Stats count by severity
+print("\n=== Stats Count by Severity ===")
+
+counts = Counter(event["severity"] for event in events)
+
+for severity, count in sorted(counts.items()):
+    print(f"{severity}: {count}")

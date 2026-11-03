@@ -1,0 +1,45 @@
+
+# Simulated packet-filtering firewall
+
+rules = [
+    {"protocol": "TCP", "port": 443, "action": "ALLOW"},
+    {"protocol": "TCP", "port": 23, "action": "DENY"},
+    {"protocol": "ANY", "port": "ANY", "action": "DENY"}
+]
+
+def filter_packet(protocol, port, rule_list):
+    for rule in rule_list:
+        protocol_match = (
+            rule["protocol"] == "ANY"
+            or rule["protocol"] == protocol
+        )
+
+        port_match = (
+            rule["port"] == "ANY"
+            or rule["port"] == port
+        )
+
+        if protocol_match and port_match:
+            return rule["action"]
+
+    return "DENY"
+
+
+packets = [
+    {"protocol": "TCP", "port": 443},
+    {"protocol": "TCP", "port": 23},
+    {"protocol": "UDP", "port": 53},
+    {"protocol": "TCP", "port": 80}
+]
+
+print("=== Firewall Rule Engine ===")
+
+for packet in packets:
+    decision = filter_packet(
+        packet["protocol"], packet["port"], rules
+    )
+
+    print(
+        f"{packet['protocol']} port {packet['port']}: "
+        f"{decision}"
+    )

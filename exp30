@@ -1,0 +1,55 @@
+
+from collections import Counter
+
+# Simulated logs from three security sources
+firewall_logs = [
+    {"source_ip": "198.51.100.25", "event": "Connection attempts"},
+    {"source_ip": "192.0.2.50", "event": "Normal connection"}
+]
+
+windows_logs = [
+    {"source_ip": "198.51.100.25", "event": "Login failed", "user": "admin"},
+    {"source_ip": "198.51.100.25", "event": "Login failed", "user": "admin"},
+    {"source_ip": "198.51.100.25", "event": "Login failed", "user": "admin"},
+    {"source_ip": "198.51.100.25", "event": "Login successful", "user": "admin"}
+]
+
+vpn_logs = [
+    {"source_ip": "198.51.100.25", "event": "VPN login successful"}
+]
+
+# Count Windows login failures by IP
+failure_counts = Counter(
+    log["source_ip"]
+    for log in windows_logs
+    if log["event"] == "Login failed"
+)
+
+firewall_ips = {
+    log["source_ip"] for log in firewall_logs
+}
+
+vpn_success_ips = {
+    log["source_ip"] for log in vpn_logs
+    if log["event"] == "VPN login successful"
+}
+
+print("=== SIEM Cross-Source Correlation ===")
+
+alert_found = False
+
+for ip, count in failure_counts.items():
+    if (
+        count >= 3
+        and ip in firewall_ips
+        and ip in vpn_success_ips
+    ):
+        alert_found = True
+        print("ALERT: Possible brute-force attack")
+        print("Source IP:", ip)
+        print("Windows failed logins:", count)
+        print("Firewall evidence: Found")
+        print("VPN successful login: Found")
+
+if not alert_found:
+    print("No matching cross-source pattern detected.")

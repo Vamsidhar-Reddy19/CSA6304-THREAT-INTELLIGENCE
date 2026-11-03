@@ -1,0 +1,56 @@
+
+import socket
+
+def port_scanner(target, start_port, end_port):
+    print("\n--- Simple Vulnerability Assessment ---")
+    print("Target Host:", target)
+    print("Scanning ports:", start_port, "to", end_port)
+
+    open_ports = []
+
+    try:
+        target_ip = socket.gethostbyname(target)
+        print("Target IP:", target_ip)
+
+        for port in range(start_port, end_port + 1):
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.5)
+
+            result = sock.connect_ex((target_ip, port))
+
+            if result == 0:
+                print("Port", port, "is OPEN")
+                open_ports.append(port)
+
+            sock.close()
+
+        print("\n--- Scan Results ---")
+
+        if open_ports:
+            print("Open ports found:", open_ports)
+            print("Review exposed services and verify their security.")
+        else:
+            print("No open ports found in the specified range.")
+
+    except socket.gaierror:
+        print("Error: Unable to resolve the target hostname.")
+    except PermissionError:
+        print("Error: Permission denied.")
+    except OSError as error:
+        print("Network error:", error)
+
+
+# Main program
+target = input("Enter target host (e.g., 127.0.0.1): ")
+
+try:
+    start_port = int(input("Enter starting port (1-65535): "))
+    end_port = int(input("Enter ending port (1-65535): "))
+
+    if not (1 <= start_port <= end_port <= 65535):
+        print("Invalid port range.")
+    else:
+        port_scanner(target, start_port, end_port)
+
+except ValueError:
+    print("Error: Please enter valid integer port numbers.")

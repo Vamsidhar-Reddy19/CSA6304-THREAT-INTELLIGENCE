@@ -1,0 +1,59 @@
+
+def classify_report(description, audience):
+    text = (description + " " + audience).lower()
+
+    keywords = {
+        "Strategic": [
+            "business leaders", "executives", "management",
+            "long-term", "business impact", "senior management",
+            "risk trends", "decision making"
+        ],
+        "Tactical": [
+            "security analysts", "mitre att&ck", "attack techniques",
+            "tactics", "techniques", "procedures", "tactics and techniques",
+            "defenders", "security team"
+        ],
+        "Operational": [
+            "incident response", "soc team", "security operations",
+            "active attack", "specific threat actor", "campaign",
+            "malware indicators", "immediate response", "ip address",
+            "hash", "domain"
+        ]
+    }
+
+    scores = {level: 0 for level in keywords}
+
+    for level, words in keywords.items():
+        for word in words:
+            if word in text:
+                scores[level] += 1
+
+    print("\n--- Threat Intelligence Report Classification ---")
+    print("Description:", description)
+    print("Intended Audience:", audience)
+
+    print("\nClassification Scores:")
+    for level, score in scores.items():
+        print(level + ":", score)
+
+    highest_score = max(scores.values())
+
+    if highest_score == 0:
+        print("\nResult: Unable to classify the report.")
+    else:
+        winners = [
+            level for level, score in scores.items()
+            if score == highest_score
+        ]
+
+        if len(winners) == 1:
+            print("\nResult: " + winners[0] + " Threat Intelligence")
+        else:
+            print("\nResult: Ambiguous classification:", ", ".join(winners))
+
+
+# Get report details from the user
+description = input("Enter threat intelligence report description: ")
+audience = input("Enter intended audience: ")
+
+classify_report(description, audience)

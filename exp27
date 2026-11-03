@@ -1,0 +1,59 @@
+
+# Simulated IDS; it does not capture or block real traffic.
+
+signatures = [
+    {
+        "name": "Suspicious HTTP Payload",
+        "protocol": "TCP",
+        "port": 80,
+        "pattern": "SIMULATED_ATTACK_MARKER"
+    }
+]
+
+events = [
+    {
+        "protocol": "TCP",
+        "port": 80,
+        "payload": "SIMULATED_ATTACK_MARKER"
+    },
+    {
+        "protocol": "UDP",
+        "port": 53,
+        "payload": "SIMULATED_ATTACK_MARKER"
+    },
+    {
+        "protocol": "TCP",
+        "port": 80,
+        "payload": "Normal web request"
+    }
+]
+
+print("=== Context-Aware IDS ===")
+
+for event in events:
+    matched = False
+
+    for signature in signatures:
+        context_match = (
+            event["protocol"] == signature["protocol"]
+            and event["port"] == signature["port"]
+        )
+
+        content_match = (
+            signature["pattern"] in event["payload"]
+        )
+
+        if context_match and content_match:
+            print("ALERT:", signature["name"])
+            print("Protocol:", event["protocol"])
+            print("Port:", event["port"])
+            matched = True
+            break
+
+    if not matched:
+        print(
+            "No alert:",
+            event["protocol"],
+            "port",
+            event["port"]
+        )

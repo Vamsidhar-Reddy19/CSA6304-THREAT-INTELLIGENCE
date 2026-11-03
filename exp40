@@ -1,0 +1,48 @@
+
+def recommend_tool(task):
+    task = task.lower()
+
+    tools = {
+        "Wireshark - Network Protocol Analyzer": [
+            "capture packets", "network traffic",
+            "analyze packets", "protocol analysis"
+        ],
+        "Splunk - SIEM and Log Analytics": [
+            "analyze logs", "security events",
+            "siem", "correlate logs"
+        ],
+        "Nmap - Network Discovery and Port Scanning": [
+            "scan ports", "discover hosts",
+            "network discovery", "open ports"
+        ],
+        "Snort - Network Intrusion Detection": [
+            "intrusion detection", "network ids",
+            "detect malicious traffic", "packet signatures"
+        ],
+        "ClamAV - Antivirus and File Scanning": [
+            "scan files", "detect malware",
+            "virus scanning", "malicious files"
+        ]
+    }
+
+    scores = {
+        tool: sum(1 for keyword in keywords if keyword in task)
+        for tool, keywords in tools.items()
+    }
+
+    highest = max(scores.values())
+
+    matches = [
+        tool for tool, score in scores.items()
+        if score == highest and score > 0
+    ]
+
+    if len(matches) == 1:
+        return matches[0]
+    elif len(matches) > 1:
+        return "Multiple Possible Tools - Manual Review Required"
+    return "No Match - Manual Review Required"
+
+
+task = input("Describe your security task: ")
+print("\nRecommended Tool:", recommend_tool(task))

@@ -1,0 +1,77 @@
+
+def identify_threat_intelligence(scenario):
+    scenario = scenario.lower()
+
+    industry_keywords = {
+        "Banking and Finance": [
+            "bank", "financial", "payment", "credit card",
+            "fraud", "transaction"
+        ],
+        "Healthcare": [
+            "hospital", "healthcare", "patient", "medical",
+            "clinic", "health records"
+        ],
+        "E-commerce and Retail": [
+            "online shopping", "e-commerce", "retail",
+            "customer data", "shopping", "store"
+        ],
+        "Education": [
+            "school", "college", "university", "student",
+            "education", "campus"
+        ],
+        "Government and Defense": [
+            "government", "military", "defense",
+            "national security", "public sector"
+        ],
+        "Manufacturing and Industry": [
+            "factory", "manufacturing", "industrial",
+            "production", "scada", "iot"
+        ],
+        "Telecommunications": [
+            "telecom", "mobile network", "5g",
+            "communication network", "isp"
+        ]
+    }
+
+    threat_areas = {
+        "Banking and Finance":
+            "Financial Threat Intelligence and Fraud Detection",
+        "Healthcare":
+            "Healthcare Cybersecurity and Patient Data Protection",
+        "E-commerce and Retail":
+            "Online Fraud Detection and Customer Data Protection",
+        "Education":
+            "Educational Network Security and Student Data Protection",
+        "Government and Defense":
+            "National Security and Cyber Espionage Intelligence",
+        "Manufacturing and Industry":
+            "Industrial Control System (ICS) and IoT Threat Intelligence",
+        "Telecommunications":
+            "Network Threat Intelligence and Infrastructure Protection"
+    }
+
+    for industry, keywords in industry_keywords.items():
+        for keyword in keywords:
+            if keyword in scenario:
+                return (
+                    "Identified Industry: " + industry,
+                    "Threat-Intelligence Application: "
+                    + threat_areas[industry]
+                )
+
+    return (
+        "Identified Industry: Unknown",
+        "Threat-Intelligence Application: "
+        "General Cyber Threat Intelligence"
+    )
+
+
+# Read business scenario
+scenario = input("Enter a short business scenario: ")
+
+# Identify the relevant application area
+industry, application = identify_threat_intelligence(scenario)
+
+print("\n--- Threat Intelligence Analysis ---")
+print(industry)
+print(application)

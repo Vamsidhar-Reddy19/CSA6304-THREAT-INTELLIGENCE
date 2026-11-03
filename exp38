@@ -1,0 +1,31 @@
+
+def calculate_risk(likelihood, impact):
+    if not (1 <= likelihood <= 5 and 1 <= impact <= 5):
+        print("Error: Ratings must be between 1 and 5.")
+        return
+
+    score = likelihood * impact
+
+    if score <= 4:
+        level = "Low"
+    elif score <= 9:
+        level = "Medium"
+    elif score <= 16:
+        level = "High"
+    else:
+        level = "Critical"
+
+    print("\n=== Security Risk Assessment ===")
+    print("Likelihood:", likelihood)
+    print("Impact:", impact)
+    print("Risk Score:", score, "/ 25")
+    print("Risk Level:", level)
+
+
+try:
+    likelihood = int(input("Enter likelihood (1-5): "))
+    impact = int(input("Enter impact (1-5): "))
+    calculate_risk(likelihood, impact)
+
+except ValueError:
+    print("Error: Please enter integer ratings.")

@@ -1,0 +1,78 @@
+
+from urllib.parse import urlparse
+import ipaddress
+
+def detect_phishing(url):
+    suspicious_keywords = [
+        "login", "verify", "update", "secure",
+        "account", "password", "banking", "free",
+        "confirm", "signin"
+    ]
+
+    risk_score = 0
+    indicators = []
+
+    # Add a scheme if the user omits it
+    if "://" not in url:
+        url = "http://" + url
+
+    parsed = urlparse(url)
+    hostname = parsed.hostname or ""
+    hostname = hostname.lower()
+
+    # 1. Check for suspicious keywords
+    for keyword in suspicious_keywords:
+        if keyword in url.lower():
+            risk_score += 1
+            indicators.append(
+                f"Suspicious keyword found: {keyword}"
+            )
+
+    # 2. Check whether the hostname is an IP address
+    try:
+        ipaddress.ip_address(hostname)
+        risk_score += 2
+        indicators.append("URL uses an IP address instead of a domain")
+    except ValueError:
+        pass
+
+    # 3. Check for excessive subdomains
+    domain_parts = hostname.split(".")
+
+    if len(domain_parts) > 3:
+        risk_score += 2
+        indicators.append("Excessive subdomains detected")
+
+    # 4. Check for insecure HTTP
+    if parsed.scheme.lower() == "http":
+        risk_score += 1
+        indicators.append("Uses HTTP instead of HTTPS")
+
+    # 5. Check for an unusually long URL
+    if len(url) > 100:
+        risk_score += 1
+        indicators.append("Unusually long URL")
+
+    # Display the assessment
+    print("\n--- Phishing URL Assessment ---")
+    print("URL:", url)
+    print("Risk Score:", risk_score)
+
+    if indicators:
+        print("\nIndicators Found:")
+        for item in indicators:
+            print("-", item)
+    else:
+        print("\nNo common phishing indicators detected.")
+
+    if risk_score >= 3:
+        print("\nResult: POTENTIALLY SUSPICIOUS URL")
+    elif risk_score >= 1:
+        print("\nResult: CAUTION - REVIEW URL")
+    else:
+        print("\nResult: NO OBVIOUS INDICATORS DETECTED")
+
+
+# Main program
+user_url = input("Enter a URL to check: ").strip()
+detect_phishing(user_url)

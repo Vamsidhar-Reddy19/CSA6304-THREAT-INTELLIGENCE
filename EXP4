@@ -1,0 +1,47 @@
+
+# VPN Confidentiality Demonstration
+# A simple XOR stream cipher as a stand-in for VPN encryption
+
+def xor_encrypt_decrypt(data, key):
+    result = bytearray()
+
+    for i in range(len(data)):
+        key_byte = key[i % len(key)]
+        result.append(data[i] ^ key_byte)
+
+    return bytes(result)
+
+
+# Sender's original message
+message = "Confidential data: Transfer amount is Rs.5000"
+
+# Shared secret key (demonstration only)
+shared_key = b"VPNsecret"
+
+# Convert message into bytes
+plaintext = message.encode("utf-8")
+
+# Encrypt the message
+ciphertext = xor_encrypt_decrypt(plaintext, shared_key)
+
+print("Original Message:")
+print(message)
+
+print("\nEncrypted Data (Captured in Transit):")
+print(ciphertext.hex())
+
+# Attempt to read captured data without the key
+print("\nCaptured Data Without Decryption:")
+print(ciphertext.decode("utf-8", errors="replace"))
+
+# Decrypt using the correct shared key
+decrypted = xor_encrypt_decrypt(ciphertext, shared_key)
+
+print("\nDecrypted Message Using Shared Key:")
+print(decrypted.decode("utf-8"))
+
+# Verify confidentiality demonstration
+if decrypted == plaintext:
+    print("\nResult: Correct key successfully restored the original message.")
+else:
+    print("\nResult: Decryption failed.")

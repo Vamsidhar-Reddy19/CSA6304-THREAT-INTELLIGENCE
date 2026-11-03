@@ -1,0 +1,36 @@
+
+from collections import Counter
+
+events = [
+    {"ip": "198.51.100.10", "event": "failed_login", "count": 8},
+    {"ip": "192.0.2.20", "event": "successful_login", "count": 1},
+    {"ip": "203.0.113.30", "event": "failed_login", "count": 2},
+    {"ip": "198.51.100.10", "event": "unusual_access", "count": 5}
+]
+
+# Known threat-intelligence indicators
+known_bad_ips = {"198.51.100.10"}
+
+print("=== THREAT HUNTING SYSTEM ===")
+
+# 1. Hypothesis-based hunting
+print("\n1. Hypothesis-Based Hunting")
+for event in events:
+    if event["event"] == "failed_login" and event["count"] >= 5:
+        print("Suspicious repeated login failures:", event)
+
+# 2. Intelligence-based hunting
+print("\n2. Intelligence-Based Hunting")
+for event in events:
+    if event["ip"] in known_bad_ips:
+        print("Known threat indicator matched:", event)
+
+# 3. Analytics-based hunting
+print("\n3. Analytics-Based Hunting")
+event_counts = Counter(
+    event["ip"] for event in events
+)
+
+for ip, count in event_counts.items():
+    if count > 1:
+        print("Repeated activity from IP:", ip, "Events:", count)

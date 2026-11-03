@@ -1,0 +1,47 @@
+
+# Educational IPS simulation; does not modify real network traffic.
+
+attack_signatures = [
+    "known-malicious-payload",
+    "simulated-attack-pattern"
+]
+
+# Trusted source addresses for this simulation
+whitelist = {"192.0.2.50"}
+
+
+def inspect_traffic(source_ip, payload):
+    print(f"\nInspecting traffic from {source_ip}")
+
+    # Whitelist reduces false positives
+    if source_ip in whitelist:
+        print("Decision: ALLOW")
+        print("Reason: Trusted source whitelist")
+        return
+
+    for signature in attack_signatures:
+        if signature in payload.lower():
+            print("Decision: BLOCK")
+            print("Reason: Attack signature matched")
+            return
+
+    print("Decision: ALLOW")
+    print("Reason: No configured signature matched")
+
+
+print("=== Simulated Inline IPS ===")
+
+inspect_traffic(
+    "198.51.100.10",
+    "known-malicious-payload"
+)
+
+inspect_traffic(
+    "192.0.2.50",
+    "known-malicious-payload"
+)
+
+inspect_traffic(
+    "198.51.100.20",
+    "normal application data"
+)

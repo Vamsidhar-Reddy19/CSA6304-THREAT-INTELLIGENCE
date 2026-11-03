@@ -1,0 +1,57 @@
+
+def classify_response_action(action):
+    action = action.lower()
+
+    phases = {
+        "Preparation": [
+            "training", "response plan", "incident response team",
+            "prepare", "readiness exercise"
+        ],
+        "Identification": [
+            "detect", "investigate", "identify",
+            "analyze logs", "confirm incident"
+        ],
+        "Containment": [
+            "isolate", "block malicious traffic",
+            "disable compromised account", "contain"
+        ],
+        "Eradication": [
+            "remove malware", "delete malicious files",
+            "patch vulnerability", "eradicate"
+        ],
+        "Recovery": [
+            "restore backup", "restore service",
+            "recover system", "resume operations"
+        ],
+        "Lessons Learned": [
+            "post-incident review", "lessons learned",
+            "improve procedures", "root cause review"
+        ]
+    }
+
+    scores = {
+        phase: sum(
+            1 for keyword in keywords if keyword in action
+        )
+        for phase, keywords in phases.items()
+    }
+
+    highest = max(scores.values())
+
+    matches = [
+        phase for phase, score in scores.items()
+        if score == highest and score > 0
+    ]
+
+    if len(matches) == 1:
+        return matches[0]
+    elif len(matches) > 1:
+        return "Ambiguous - Manual Review Required"
+    else:
+        return "Unknown - Manual Review Required"
+
+
+action = input("Describe the incident-response action: ")
+result = classify_response_action(action)
+
+print("\nIncident Response Phase:", result)

@@ -1,0 +1,39 @@
+
+# Required permissions for each role
+role_permissions = {
+    "Intern": {"read"},
+    "Analyst": {"read", "analyze"},
+    "Administrator": {"read", "analyze", "manage"}
+}
+
+# Simulated user accounts
+users = [
+    {"name": "Alice", "role": "Intern",
+     "permissions": {"read"}},
+    {"name": "Bob", "role": "Analyst",
+     "permissions": {"read", "analyze", "manage"}},
+    {"name": "Charlie", "role": "Administrator",
+     "permissions": {"read", "analyze", "manage"}}
+]
+
+print("=== Least Privilege Access Audit ===")
+
+for user in users:
+    required = role_permissions[user["role"]]
+    actual = user["permissions"]
+
+    excess = actual - required
+    missing = required - actual
+
+    print("\nUser:", user["name"])
+    print("Role:", user["role"])
+
+    if excess:
+        print("Excess permissions:", sorted(excess))
+    if missing:
+        print("Missing permissions:", sorted(missing))
+
+    if not excess and not missing:
+        print("Status: COMPLIANT")
+    else:
+        print("Status: REVIEW REQUIRED")

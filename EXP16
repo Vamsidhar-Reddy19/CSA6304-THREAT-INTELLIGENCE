@@ -1,0 +1,34 @@
+
+# Experiment 16: Defense-in-Depth Simulation
+
+defense_layers = [
+    {"name": "Firewall", "blocks_attack": True},
+    {"name": "Intrusion Detection System (IDS)", "blocks_attack": False},
+    {"name": "Authentication", "blocks_attack": True},
+    {"name": "Endpoint Protection", "blocks_attack": False},
+    {"name": "Data Encryption", "blocks_attack": True}
+]
+
+def simulate_attack(layers):
+    print("=== DEFENSE-IN-DEPTH SIMULATION ===")
+    print("\nAn attack is approaching the protected system...\n")
+
+    for number, layer in enumerate(layers, start=1):
+        print(f"Layer {number}: {layer['name']}")
+
+        if layer["blocks_attack"]:
+            print("Result: ATTACK BLOCKED")
+            print("The attack did not pass this security layer.")
+            print("\nFINAL RESULT: SYSTEM PROTECTED")
+            return
+
+        else:
+            print("Result: ATTACK PASSED THIS LAYER")
+
+        print()
+
+    print("FINAL RESULT: ATTACK REACHED THE PROTECTED DATA")
+    print("All security layers failed to stop the attack.")
+
+
+simulate_attack(defense_layers)

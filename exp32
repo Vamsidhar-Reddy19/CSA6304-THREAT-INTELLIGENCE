@@ -1,0 +1,51 @@
+
+# True means the property is satisfied.
+# False means the property is violated.
+
+security_properties = [
+    {
+        "property": "Data encryption enabled",
+        "principle": "Confidentiality",
+        "status": True
+    },
+    {
+        "property": "Access restricted to authorized users",
+        "principle": "Confidentiality",
+        "status": False
+    },
+    {
+        "property": "File integrity verification passed",
+        "principle": "Integrity",
+        "status": True
+    },
+    {
+        "property": "Unauthorized file modification prevented",
+        "principle": "Integrity",
+        "status": False
+    },
+    {
+        "property": "Service available",
+        "principle": "Availability",
+        "status": True
+    }
+]
+
+violations = set()
+
+print("=== CIA Security Assessment ===")
+
+for item in security_properties:
+    status_text = "PASS" if item["status"] else "FAIL"
+
+    print(f"{item['property']}: {status_text}")
+
+    if item["status"] is False:
+        violations.add(item["principle"])
+
+print("\n--- CIA Assessment Result ---")
+
+if violations:
+    for principle in sorted(violations):
+        print("Violated Principle:", principle)
+else:
+    print("No CIA violations detected.")

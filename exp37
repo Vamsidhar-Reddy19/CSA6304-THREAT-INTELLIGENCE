@@ -1,0 +1,31 @@
+
+import time
+
+# Simulated baseline: maximum expected failed logins
+baseline = {
+    "max_failed_logins": 3
+}
+
+# Simulated stream of login events
+login_stream = [
+    {"user": "alice", "failed_logins": 1},
+    {"user": "bob", "failed_logins": 2},
+    {"user": "charlie", "failed_logins": 6},
+    {"user": "alice", "failed_logins": 1}
+]
+
+print("=== Continuous Security Monitoring ===")
+
+for event in login_stream:
+    print("\nMonitoring user:", event["user"])
+    print("Failed login count:", event["failed_logins"])
+
+    if event["failed_logins"] > baseline["max_failed_logins"]:
+        print("ALERT: Login anomaly detected!")
+    else:
+        print("Status: Normal activity")
+
+    # Simulate a short monitoring interval
+    time.sleep(1)
+
+print("\nMonitoring simulation completed.")

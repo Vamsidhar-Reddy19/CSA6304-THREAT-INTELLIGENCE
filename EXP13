@@ -1,0 +1,54 @@
+
+def assess_threat_intelligence():
+    print("=== Threat Intelligence Assessment System ===")
+
+    data = input("\nEnter the collected security data: ")
+
+    print("\n--- Assessment Questions ---")
+    context = input("Does it include context? (yes/no): ").strip().lower()
+    confidence = input("Confidence level (high/medium/low): ").strip().lower()
+    actionable = input("Can an analyst take action based on it? (yes/no): ").strip().lower()
+
+    # Validate the inputs
+    if context not in ["yes", "no"]:
+        print("Invalid context input. Enter yes or no.")
+        return
+
+    if confidence not in ["high", "medium", "low"]:
+        print("Invalid confidence level.")
+        return
+
+    if actionable not in ["yes", "no"]:
+        print("Invalid actionability input. Enter yes or no.")
+        return
+
+    # Assess the collected data
+    if context == "yes" and confidence in ["high", "medium"] and actionable == "yes":
+        result = "Qualified Threat Intelligence"
+        explanation = (
+            "The data has context, a reasonable confidence level, "
+            "and supports a security action."
+        )
+    elif context == "yes" and actionable == "yes" and confidence == "low":
+        result = "Potential Threat Intelligence - Needs Verification"
+        explanation = (
+            "The data may be useful, but its low confidence requires "
+            "additional verification."
+        )
+    else:
+        result = "Unprocessed or Incomplete Raw Data"
+        explanation = (
+            "The data needs additional context, verification, "
+            "or a clear action before it can be used effectively."
+        )
+
+    print("\n--- Assessment Result ---")
+    print("Collected Data:", data)
+    print("Context Available:", context)
+    print("Confidence Level:", confidence)
+    print("Actionable:", actionable)
+    print("Classification:", result)
+    print("Explanation:", explanation)
+
+
+assess_threat_intelligence()

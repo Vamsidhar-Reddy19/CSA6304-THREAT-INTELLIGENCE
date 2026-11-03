@@ -1,0 +1,69 @@
+
+# Stateful Inspection Firewall Simulation
+
+class StatefulFirewall:
+    def __init__(self):
+        # Tracks established outbound connections
+        self.connections = set()
+
+    def process_packet(self, source, destination, direction, protocol):
+        connection = (source, destination, protocol)
+        reverse_connection = (destination, source, protocol)
+
+        print("\nPacket Details:")
+        print("Source:", source)
+        print("Destination:", destination)
+        print("Direction:", direction)
+        print("Protocol:", protocol)
+
+        if direction == "OUTBOUND":
+            # Record the outbound connection
+            self.connections.add(connection)
+            print("Firewall Action: ALLOWED")
+            print("Reason: Outbound connection recorded.")
+
+        elif direction == "INBOUND":
+            # Permit return traffic for a tracked connection
+            if reverse_connection in self.connections:
+                print("Firewall Action: ALLOWED")
+                print("Reason: Return traffic matches an outbound connection.")
+
+                # Remove the tracked connection after the simulated reply
+                self.connections.remove(reverse_connection)
+            else:
+                print("Firewall Action: BLOCKED")
+                print("Reason: Unsolicited inbound packet.")
+
+        else:
+            print("Firewall Action: BLOCKED")
+            print("Reason: Invalid packet direction.")
+
+
+# Create firewall
+firewall = StatefulFirewall()
+
+print("=== Stateful Inspection Firewall ===")
+
+# Scenario 1: Outbound connection
+firewall.process_packet(
+    "192.168.1.10:5000",
+    "203.0.113.20:80",
+    "OUTBOUND",
+    "TCP"
+)
+
+# Scenario 2: Return traffic for the connection
+firewall.process_packet(
+    "203.0.113.20:80",
+    "192.168.1.10:5000",
+    "INBOUND",
+    "TCP"
+)
+
+# Scenario 3: Unsolicited inbound packet
+firewall.process_packet(
+    "198.51.100.50:443",
+    "192.168.1.10:6000",
+    "INBOUND",
+    "TCP"
+)

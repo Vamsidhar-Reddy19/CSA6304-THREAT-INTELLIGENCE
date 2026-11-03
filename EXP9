@@ -1,0 +1,67 @@
+
+def classify_lifecycle_stage(activity):
+    activity = activity.lower()
+
+    keywords = {
+        "Direction": [
+            "define objectives", "security requirements",
+            "identify priorities", "intelligence requirements",
+            "set goals"
+        ],
+        "Collection": [
+            "collect logs", "gather data", "threat feeds",
+            "collect information", "gather intelligence"
+        ],
+        "Processing": [
+            "clean data", "filter logs", "normalize data",
+            "remove duplicates", "organize data"
+        ],
+        "Analysis": [
+            "analyze threats", "identify patterns",
+            "assess risk", "investigate attack",
+            "correlate events"
+        ],
+        "Dissemination": [
+            "share report", "send intelligence",
+            "distribute findings", "inform management",
+            "publish report"
+        ],
+        "Feedback": [
+            "provide feedback", "review report",
+            "improve requirements", "evaluate usefulness",
+            "request further intelligence"
+        ]
+    }
+
+    scores = {stage: 0 for stage in keywords}
+
+    for stage, terms in keywords.items():
+        for term in terms:
+            if term in activity:
+                scores[stage] += 1
+
+    print("\n--- Threat Intelligence Lifecycle Classification ---")
+    print("Activity:", activity)
+
+    highest_score = max(scores.values())
+
+    if highest_score == 0:
+        print("Stage: Unable to classify the activity.")
+        print("Please provide a more descriptive activity.")
+        return
+
+    matching_stages = [
+        stage for stage, score in scores.items()
+        if score == highest_score
+    ]
+
+    if len(matching_stages) == 1:
+        print("Identified Lifecycle Stage:", matching_stages[0])
+    else:
+        print("Ambiguous activity. Possible stages:",
+              ", ".join(matching_stages))
+
+
+# Main program
+activity = input("Enter the intelligence team's activity: ")
+classify_lifecycle_stage(activity)

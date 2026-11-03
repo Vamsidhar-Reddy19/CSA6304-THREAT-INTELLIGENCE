@@ -1,0 +1,55 @@
+
+def recommend_containment(incident):
+    incident = incident.lower()
+
+    if any(word in incident for word in [
+        "ransomware", "malware infection", "infected endpoint"
+    ]):
+        return (
+            "Incident: Malware",
+            "Isolate the affected endpoint from the network "
+            "and preserve evidence."
+        )
+
+    elif any(word in incident for word in [
+        "stolen password", "compromised account",
+        "unauthorized login"
+    ]):
+        return (
+            "Incident: Account Compromise",
+            "Disable or restrict the affected account, "
+            "revoke active sessions, and reset credentials."
+        )
+
+    elif any(word in incident for word in [
+        "data breach", "data exfiltration",
+        "sensitive data exposed"
+    ]):
+        return (
+            "Incident: Data Exposure",
+            "Restrict affected access paths, preserve logs, "
+            "and activate the incident response process."
+        )
+
+    elif any(word in incident for word in [
+        "ddos", "denial of service", "traffic flood"
+    ]):
+        return (
+            "Incident: DoS/DDoS",
+            "Engage network defenders and apply approved "
+            "traffic filtering or mitigation measures."
+        )
+
+    else:
+        return (
+            "Incident: Unknown",
+            "Escalate for investigation and select containment "
+            "measures based on verified evidence."
+        )
+
+
+incident = input("Describe the security incident: ")
+category, recommendation = recommend_containment(incident)
+
+print("\n", category)
+print("Recommended Containment:", recommendation)

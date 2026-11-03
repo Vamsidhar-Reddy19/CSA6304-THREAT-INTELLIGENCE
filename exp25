@@ -1,0 +1,79 @@
+
+import hashlib
+import json
+from datetime import datetime
+
+def calculate_hash(record):
+    # Exclude the stored hash while calculating the record hash
+    content = {
+        key: value for key, value in record.items()
+        if key != "record_hash"
+    }
+
+    serialized = json.dumps(
+        content, sort_keys=True, separators=(",", ":")
+    ).encode()
+
+    return hashlib.sha256(serialized).hexdigest()
+
+
+def create_record(timestamp, evidence, previous_hash):
+    record = {
+        "timestamp": timestamp,
+        "evidence": evidence,
+        "previous_hash": previous_hash
+    }
+
+    record["record_hash"] = calculate_hash(record)
+    return record
+
+
+def verify_chain(records):
+    previous_hash = "GENESIS"
+    previous_time = None
+
+    for number, record in enumerate(records, start=1):
+        current_time = datetime.fromisoformat(record["timestamp"])
+
+        if record["previous_hash"] != previous_hash:
+            print(f"Record {number}: BROKEN HASH CHAIN")
+            return False
+
+        if calculate_hash(record) != record["record_hash"]:
+            print(f"Record {number}: RECORD HASH MISMATCH")
+            return False
+
+        if previous_time is not None and current_time < previous_time:
+            print(f"Record {number}: TIMESTAMP ORDER ERROR")
+            return False
+
+        previous_hash = record["record_hash"]
+        previous_time = current_time
+
+    print("Chain of custody verified successfully.")
+    return True
+
+
+# Create a valid sample chain
+records = []
+
+records.append(create_record(
+    "2026-10-20T09:00:00",
+    "Evidence collected",
+    "GENESIS"
+))
+
+records.append(create_record(
+    "2026-10-20T09:15:00",
+    "Evidence transferred to analyst",
+    records[-1]["record_hash"]
+))
+
+records.append(create_record(
+    "2026-10-20T10:00:00",
+    "Evidence stored securely",
+    records[-1]["record_hash"]
+))
+
+print("=== Chain-of-Custody Verification ===")
+verify_chain(records)

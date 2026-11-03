@@ -1,0 +1,46 @@
+
+def identify_improvements(report):
+    report = report.lower()
+
+    areas = {
+        "Patch Management": [
+            "patch", "unpatched", "software update",
+            "vulnerability remediation"
+        ],
+        "Security Awareness": [
+            "training", "phishing awareness",
+            "employee awareness"
+        ],
+        "Monitoring": [
+            "monitoring", "logging", "alerting",
+            "detection system"
+        ],
+        "Backup Strategy": [
+            "backup", "recovery", "restore",
+            "disaster recovery"
+        ],
+        "Access Control": [
+            "access control", "least privilege",
+            "permissions", "multi-factor authentication"
+        ]
+    }
+
+    matched = []
+
+    for area, keywords in areas.items():
+        if any(keyword in report for keyword in keywords):
+            matched.append(area)
+
+    return matched
+
+
+report = input("Enter post-incident report: ")
+results = identify_improvements(report)
+
+print("\n--- Improvement Areas Identified ---")
+
+if results:
+    for area in results:
+        print("-", area)
+else:
+    print("No configured improvement areas identified.")

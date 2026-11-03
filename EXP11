@@ -1,0 +1,74 @@
+
+# Experiment 11: Packet Sniffing Using Scapy
+# Includes installation for Google Colab
+
+# Step 1: Install Scapy
+import subprocess
+import sys
+
+print("Installing Scapy...")
+subprocess.check_call([
+    sys.executable, "-m", "pip", "install", "-q", "scapy"
+])
+
+print("Scapy installed successfully!")
+
+# Step 2: Import Scapy
+from scapy.all import Ether, IP, TCP, UDP, DNS, DNSQR, sniff, conf
+
+# Step 3: Display packet summary
+def display_packet(packet):
+    print("Captured Packet:", packet.summary())
+
+
+# Step 4: Demonstrate packet summaries
+# Colab may not permit live packet capture, so first
+# demonstrate the functionality using sample packets.
+
+print("\n--- Packet Sniffing Demonstration ---")
+
+sample_packets = [
+    Ether() / IP(src="192.168.1.10", dst="192.168.1.20")
+    / TCP(sport=5000, dport=80),
+
+    Ether() / IP(src="192.168.1.15", dst="8.8.8.8")
+    / UDP(sport=53000, dport=53),
+
+    Ether() / IP(src="192.168.1.25", dst="192.168.1.30")
+    / TCP(sport=443, dport=6000)
+]
+
+print("\nDisplaying sample packet summaries:\n")
+
+for packet in sample_packets:
+    display_packet(packet)
+
+# Step 5: Optional live packet capture
+# Enable this only on an authorized system
+# that supports packet capture.
+
+choice = input(
+    "\nDo you want to attempt live capture? (yes/no): "
+).strip().lower()
+
+if choice == "yes":
+    try:
+        print("\nAttempting to capture 5 packets...")
+        sniff(
+            iface=conf.iface,
+            prn=display_packet,
+            count=5,
+            store=False,
+            timeout=15
+        )
+        print("Live capture finished.")
+    except Exception as error:
+        print("\nLive capture unavailable:", error)
+        print(
+            "Use a local computer with suitable "
+            "network interface access and permissions."
+        )
+else:
+    print("\nSample packet demonstration completed.")
+
+print("\nExperiment completed.")

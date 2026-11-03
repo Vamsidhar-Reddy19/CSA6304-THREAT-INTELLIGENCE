@@ -1,0 +1,44 @@
+
+# Simulated Threat Intelligence Platform
+
+# Step 1: Raw intelligence feed
+raw_iocs = [
+    "  MALICIOUS.EXAMPLE ",
+    "198.51.100.25",
+    "SUSPICIOUS.EXAMPLE"
+]
+
+# Step 2: Normalize the indicators
+normalized_iocs = {
+    ioc.strip().lower() for ioc in raw_iocs
+}
+
+print("=== Normalized Threat Intelligence Feed ===")
+for ioc in sorted(normalized_iocs):
+    print(ioc)
+
+# Step 3: Simulated internal security logs
+internal_logs = [
+    {"source": "Firewall", "indicator": "198.51.100.25"},
+    {"source": "DNS", "indicator": "malicious.example"},
+    {"source": "Authentication", "indicator": "192.0.2.10"}
+]
+
+# Step 4: Correlate logs with intelligence
+print("\n=== Correlation Results ===")
+
+alert_count = 0
+
+for log in internal_logs:
+    indicator = log["indicator"].strip().lower()
+
+    if indicator in normalized_iocs:
+        alert_count += 1
+        print("ALERT: Threat indicator matched!")
+        print("Source:", log["source"])
+        print("Indicator:", indicator)
+
+if alert_count == 0:
+    print("No intelligence matches found.")
+
+print("\nTotal alerts:", alert_count)

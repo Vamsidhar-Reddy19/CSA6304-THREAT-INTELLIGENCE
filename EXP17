@@ -1,0 +1,78 @@
+
+# Experiment 17: ISO/IEC 27001 Annex A Classification
+
+def classify_control(description):
+    description = description.lower()
+
+    control_domains = {
+        "Organizational (A.5)": [
+            "security policy", "risk assessment",
+            "supplier security", "incident management",
+            "business continuity", "asset inventory",
+            "security governance", "threat intelligence"
+        ],
+
+        "People (A.6)": [
+            "employee training", "security awareness",
+            "background screening", "employee misconduct",
+            "confidentiality agreement", "disciplinary process",
+            "terms of employment", "staff awareness"
+        ],
+
+        "Physical (A.7)": [
+            "security camera", "cctv", "door lock",
+            "physical access", "security guard",
+            "server room", "visitor access",
+            "equipment disposal", "secure facility"
+        ],
+
+        "Technological (A.8)": [
+            "firewall", "encryption", "multi-factor authentication",
+            "antivirus", "access control software", "network security",
+            "security patch", "system logging", "backup",
+            "secure coding", "malware protection"
+        ]
+    }
+
+    scores = {}
+
+    # Count matching keywords in each domain
+    for domain, keywords in control_domains.items():
+        scores[domain] = sum(
+            1 for keyword in keywords
+            if keyword in description
+        )
+
+    highest_score = max(scores.values())
+
+    print("\n--- Domain Match Scores ---")
+    for domain, score in scores.items():
+        print(f"{domain}: {score}")
+
+    # Handle descriptions with no matching keywords
+    if highest_score == 0:
+        return "Unclassified - Manual Review Required"
+
+    # Identify the highest-scoring domain(s)
+    matching_domains = [
+        domain for domain, score in scores.items()
+        if score == highest_score
+    ]
+
+    if len(matching_domains) > 1:
+        return "Ambiguous - Manual Review Required: " + ", ".join(
+            matching_domains
+        )
+
+    return matching_domains[0]
+
+
+print("=== ISO/IEC 27001 Annex A Control Classifier ===")
+
+description = input("\nDescribe the security control: ")
+
+result = classify_control(description)
+
+print("\n--- Classification Result ---")
+print("Control Description:", description)
+print("Annex A Domain:", result)
